@@ -78,7 +78,106 @@ fi
 
 read -p "Enter your email for SSL certificates: " EMAIL
 
+# RAM detection and resource limit configuration
 echo ""
+echo -e "${GREEN}==========================================${NC}"
+echo -e "${GREEN}  RESOURCE LIMIT CONFIGURATION${NC}"
+echo -e "${GREEN}==========================================${NC}"
+echo ""
+
+# Detect system RAM
+TOTAL_RAM=$(free -g | awk '/^Mem:/{print $2}')
+
+echo -e "Detected System RAM: ${GREEN}${TOTAL_RAM}GB${NC}"
+echo ""
+echo "How much RAM does your server have?"
+echo ""
+echo "1) 16-32GB  - Conservative limits (~9GB for media stack)"
+echo "2) 32-48GB  - Moderate limits (~16GB for media stack)"
+echo "3) 48-64GB  - Relaxed limits (~24GB for media stack)"
+echo "4) 64GB+    - Minimal limits (~32GB for media stack)"
+echo ""
+read -p "Select profile [1-4]: " RAM_PROFILE
+
+# Validate input
+while [[ ! "$RAM_PROFILE" =~ ^[1-4]$ ]]; do
+  echo -e "${RED}Invalid selection. Please choose 1, 2, 3, or 4.${NC}"
+  read -p "Select profile [1-4]: " RAM_PROFILE
+done
+
+# Set resource limits based on profile
+case $RAM_PROFILE in
+  1)
+    # Conservative (16-32GB)
+    PROFILE_NAME="Conservative"
+    ARR_MEM="1G"
+    ARR_CPU="1.0"
+    QBIT_MEM="1G"
+    QBIT_CPU="2.0"
+    PROWLARR_MEM="512M"
+    PROWLARR_CPU="0.5"
+    BAZARR_MEM="512M"
+    BAZARR_CPU="0.5"
+    FLARE_MEM="512M"
+    FLARE_CPU="1.0"
+    MEDIA_MEM="512M"
+    MEDIA_CPU="0.5"
+    ;;
+  2)
+    # Moderate (32-48GB)
+    PROFILE_NAME="Moderate"
+    ARR_MEM="2G"
+    ARR_CPU="1.5"
+    QBIT_MEM="2G"
+    QBIT_CPU="3.0"
+    PROWLARR_MEM="1G"
+    PROWLARR_CPU="0.75"
+    BAZARR_MEM="1G"
+    BAZARR_CPU="0.75"
+    FLARE_MEM="1G"
+    FLARE_CPU="1.5"
+    MEDIA_MEM="1G"
+    MEDIA_CPU="0.75"
+    ;;
+  3)
+    # Relaxed (48-64GB)
+    PROFILE_NAME="Relaxed"
+    ARR_MEM="4G"
+    ARR_CPU="2.0"
+    QBIT_MEM="4G"
+    QBIT_CPU="4.0"
+    PROWLARR_MEM="2G"
+    PROWLARR_CPU="1.0"
+    BAZARR_MEM="2G"
+    BAZARR_CPU="1.0"
+    FLARE_MEM="2G"
+    FLARE_CPU="2.0"
+    MEDIA_MEM="2G"
+    MEDIA_CPU="1.0"
+    ;;
+  4)
+    # Minimal (64GB+)
+    PROFILE_NAME="Minimal/No Limits"
+    ARR_MEM="8G"
+    ARR_CPU="4.0"
+    QBIT_MEM="8G"
+    QBIT_CPU="6.0"
+    PROWLARR_MEM="4G"
+    PROWLARR_CPU="2.0"
+    BAZARR_MEM="4G"
+    BAZARR_CPU="2.0"
+    FLARE_MEM="4G"
+    FLARE_CPU="2.0"
+    MEDIA_MEM="4G"
+    MEDIA_CPU="2.0"
+    ;;
+esac
+
+echo ""
+echo -e "${GREEN}Selected profile: $PROFILE_NAME${NC}"
+echo "Resource limits will be configured accordingly."
+echo ""
+
 echo "Generating secure passwords..."
 
 # Generate random passwords
@@ -149,8 +248,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
-          cpus: '1.0'
+          memory: $ARR_MEM
+          cpus: '$ARR_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.rule=Host(\`sonarr.${DOMAIN}\`)"
@@ -176,8 +275,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
-          cpus: '1.0'
+          memory: $ARR_MEM
+          cpus: '$ARR_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.rule=Host(\`radarr.${DOMAIN}\`)"
@@ -203,8 +302,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
-          cpus: '1.0'
+          memory: $ARR_MEM
+          cpus: '$ARR_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.lidarr.rule=Host(\`lidarr.${DOMAIN}\`)"
@@ -230,8 +329,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
-          cpus: '1.0'
+          memory: $ARR_MEM
+          cpus: '$ARR_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.readarr.rule=Host(\`readarr.${DOMAIN}\`)"
@@ -255,8 +354,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: $PROWLARR_MEM
+          cpus: '$PROWLARR_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.rule=Host(\`prowlarr.${DOMAIN}\`)"
@@ -282,8 +381,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: $BAZARR_MEM
+          cpus: '$BAZARR_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr.rule=Host(\`bazarr.${DOMAIN}\`)"
@@ -316,8 +415,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
-          cpus: '2.0'
+          memory: $QBIT_MEM
+          cpus: '$QBIT_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.qbittorrent.rule=Host(\`qbittorrent.${DOMAIN}\`)"
@@ -337,8 +436,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '1.0'
+          memory: $FLARE_MEM
+          cpus: '$FLARE_CPU'
     restart: unless-stopped
 
   # ============================================
@@ -361,8 +460,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: $MEDIA_MEM
+          cpus: '$MEDIA_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.navidrome.rule=Host(\`music.${DOMAIN}\`)"
@@ -384,8 +483,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: $MEDIA_MEM
+          cpus: '$MEDIA_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audiobookshelf.rule=Host(\`audiobooks.${DOMAIN}\`)"
@@ -413,8 +512,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: $MEDIA_MEM
+          cpus: '$MEDIA_CPU'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ombi.rule=Host(\`requests.${DOMAIN}\`)"
@@ -478,6 +577,7 @@ Media Automation Stack Installation Complete!
 
 Installation Date: $(date)
 Domain: ${DOMAIN}
+Resource Profile: ${PROFILE_NAME}
 
 Services & Access URLs:
 ======================
@@ -539,8 +639,15 @@ Directory Structure:
 ./downloads/*    - Download staging area
 ./media/*        - Final media storage (link to Jellyfin)
 
-Total RAM Usage: ~9GB additional
-Total with homelab-stack: ~16-17GB
+Resource Configuration:
+========================
+Profile: ${PROFILE_NAME}
+*arr apps (Sonarr/Radarr/Lidarr/Readarr): ${ARR_MEM} RAM, ${ARR_CPU} CPU each
+qBittorrent: ${QBIT_MEM} RAM, ${QBIT_CPU} CPU
+Prowlarr: ${PROWLARR_MEM} RAM, ${PROWLARR_CPU} CPU
+Bazarr: ${BAZARR_MEM} RAM, ${BAZARR_CPU} CPU
+FlareSolverr: ${FLARE_MEM} RAM, ${FLARE_CPU} CPU
+Media Servers (Navidrome/Audiobookshelf/Ombi): ${MEDIA_MEM} RAM, ${MEDIA_CPU} CPU each
 
 For detailed setup guides, see README.md
 INFOEOF
