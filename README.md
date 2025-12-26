@@ -7,7 +7,9 @@ Automated media acquisition and management for TV shows, movies, music, and audi
 > ⚠️ **CRITICAL WARNINGS - READ BEFORE INSTALLING**
 >
 > **Resource Requirements:**
-> - **32GB RAM minimum** (adds ~9GB to base homelab-stack)
+> - **16GB RAM minimum** for Conservative profile (adds ~9GB to base stack)
+> - **32GB+ RAM recommended** for better performance with Moderate/Relaxed profiles
+> - **64GB+ RAM** for Minimal Limits profile (maximum performance)
 > - 100GB+ free disk space for downloads
 > - Quad-core CPU recommended
 >
@@ -49,23 +51,58 @@ Automated media acquisition and management for TV shows, movies, music, and audi
 
 ## 📊 Resource Usage
 
-**Additional RAM: ~9GB** (on top of base homelab-stack)
+### Dynamic Resource Profiles
 
-| Service | RAM Limit | CPU Limit | Purpose |
-|---------|-----------|-----------|---------|
-| Sonarr | 1GB | 1.0 CPU | TV automation |
-| Radarr | 1GB | 1.0 CPU | Movie automation |
-| Lidarr | 1GB | 1.0 CPU | Music automation |
-| Readarr | 1GB | 1.0 CPU | Audiobook automation |
-| Prowlarr | 512MB | 0.5 CPU | Indexer management |
-| Bazarr | 512MB | 0.5 CPU | Subtitle automation |
-| qBittorrent | 1GB | 2.0 CPU | Download client |
-| FlareSolverr | 512MB | 1.0 CPU | Cloudflare bypass |
-| Navidrome | 512MB | 0.5 CPU | Music streaming |
-| Audiobookshelf | 512MB | 0.5 CPU | Audiobook streaming |
-| Ombi | 512MB | 0.5 CPU | Request management |
+The installer **automatically configures resource limits** based on your available RAM. During installation, you'll select a profile:
 
-**Total with base stack: ~16-17GB RAM**
+**1. Conservative (16-32GB RAM)** - ~9GB for media stack
+| Service | RAM | CPU | Purpose |
+|---------|-----|-----|---------|
+| Sonarr/Radarr/Lidarr/Readarr | 1GB | 1.0 | *arr automation |
+| qBittorrent | 1GB | 2.0 | Download client |
+| Prowlarr | 512MB | 0.5 | Indexer management |
+| Bazarr | 512MB | 0.5 | Subtitles |
+| FlareSolverr | 512MB | 1.0 | Cloudflare bypass |
+| Navidrome/Audiobookshelf/Ombi | 512MB | 0.5 | Media servers |
+
+**2. Moderate (32-48GB RAM)** - ~16GB for media stack
+| Service | RAM | CPU |
+|---------|-----|-----|
+| Sonarr/Radarr/Lidarr/Readarr | 2GB | 1.5 |
+| qBittorrent | 2GB | 3.0 |
+| Prowlarr | 1GB | 0.75 |
+| Bazarr | 1GB | 0.75 |
+| FlareSolverr | 1GB | 1.5 |
+| Navidrome/Audiobookshelf/Ombi | 1GB | 0.75 |
+
+**3. Relaxed (48-64GB RAM)** - ~24GB for media stack
+| Service | RAM | CPU |
+|---------|-----|-----|
+| Sonarr/Radarr/Lidarr/Readarr | 4GB | 2.0 |
+| qBittorrent | 4GB | 4.0 |
+| Prowlarr | 2GB | 1.0 |
+| Bazarr | 2GB | 1.0 |
+| FlareSolverr | 2GB | 2.0 |
+| Navidrome/Audiobookshelf/Ombi | 2GB | 1.0 |
+
+**4. Minimal Limits (64GB+ RAM)** - ~32GB for media stack
+| Service | RAM | CPU |
+|---------|-----|-----|
+| Sonarr/Radarr/Lidarr/Readarr | 8GB | 4.0 |
+| qBittorrent | 8GB | 6.0 |
+| Prowlarr | 4GB | 2.0 |
+| Bazarr | 4GB | 2.0 |
+| FlareSolverr | 4GB | 2.0 |
+| Navidrome/Audiobookshelf/Ombi | 4GB | 2.0 |
+
+### Why Resource Limits?
+
+- **Prevent system crashes** - A runaway process can't consume all RAM
+- **Fair resource distribution** - No single service monopolizes resources
+- **Predictable performance** - You know exactly how much RAM is allocated
+- **Easy capacity planning** - Clear view of total resource usage
+
+**Note:** With 64GB+ RAM, you can safely use the "Minimal Limits" profile for maximum performance without worrying about resource exhaustion.
 
 -----
 
@@ -106,6 +143,7 @@ The installer will:
 - Verify homelab-stack is installed
 - Display warnings and require confirmation
 - Ask for domain configuration
+- **Detect your RAM and ask you to select a resource profile** (Conservative/Moderate/Relaxed/Minimal)
 - Generate secure passwords
 - Create directory structure
 - Validate DNS records for all services
@@ -633,7 +671,8 @@ Add authentication to Traefik for additional security:
 - Legal compliance is YOUR responsibility
 - SSL certificates take 2-5 minutes per service
 - DNS must be configured before installation
-- Resource limits prevent system crashes - don't remove them
+- **Resource limits are automatically configured** based on your RAM - choose the right profile during installation
+- Select "Minimal Limits" profile for 64GB+ RAM systems for best performance
 - Backups are critical - automate them from day one
 - Private trackers require API keys and account management
 - Monitor disk space - downloads can fill drives quickly
