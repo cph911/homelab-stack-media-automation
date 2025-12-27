@@ -217,7 +217,7 @@ echo -e "${GREEN}✓ Directory structure created${NC}"
 echo ""
 echo "Generating Docker Compose configuration..."
 
-cat > docker-compose.yml << 'DOCKEREOF'
+cat > docker-compose.yml << DOCKEREOF
 version: '3.8'
 
 networks:
