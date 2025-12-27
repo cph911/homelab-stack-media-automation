@@ -49,7 +49,7 @@ echo "  Media Automation:"
 echo "    - Sonarr (TV shows)"
 echo "    - Radarr (Movies)"
 echo "    - Lidarr (Music)"
-echo "    - Readarr (Audiobooks/Ebooks)"
+echo "    - Readarr (Audiobooks/Ebooks) - DISABLED due to image compatibility issues"
 echo "  Media Servers:"
 echo "    - Navidrome (Music streaming)"
 echo "    - Audiobookshelf (Audiobooks/Podcasts)"
@@ -312,32 +312,36 @@ services:
       - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
     restart: unless-stopped
 
-  readarr:
-    image: lscr.io/linuxserver/readarr:latest
-    container_name: readarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    volumes:
-      - ./config/readarr:/config
-      - ./media/audiobooks:/audiobooks
-      - ./downloads:/downloads
-    networks:
-      - traefik
-      - media
-    deploy:
-      resources:
-        limits:
-          memory: $ARR_MEM
-          cpus: '$ARR_CPU'
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.readarr.rule=Host(\`readarr.${DOMAIN}\`)"
-      - "traefik.http.routers.readarr.entrypoints=websecure"
-      - "traefik.http.routers.readarr.tls.certresolver=myresolver"
-      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
-    restart: unless-stopped
+  # readarr:
+  #   image: lscr.io/linuxserver/readarr:latest
+  #   container_name: readarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./config/readarr:/config
+  #     - ./media/audiobooks:/audiobooks
+  #     - ./downloads:/downloads
+  #   networks:
+  #     - traefik
+  #     - media
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: $ARR_MEM
+  #         cpus: '$ARR_CPU'
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.readarr.rule=Host(\`readarr.${DOMAIN}\`)"
+  #     - "traefik.http.routers.readarr.entrypoints=websecure"
+  #     - "traefik.http.routers.readarr.tls.certresolver=myresolver"
+  #     - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+  #   restart: unless-stopped
+
+  # NOTE: Readarr is disabled due to architecture compatibility issues
+  # The linuxserver/readarr images don't currently support linux/amd64 properly
+  # You can manually add it later if they fix their builds, or use an alternative image
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -528,7 +532,7 @@ echo -e "${GREEN}✓ Docker Compose configuration created${NC}"
 # Validate DNS
 echo ""
 echo "Validating DNS records..."
-SERVICES=("sonarr" "radarr" "lidarr" "readarr" "prowlarr" "bazarr" "qbittorrent" "music" "audiobooks" "requests")
+SERVICES=("sonarr" "radarr" "lidarr" "prowlarr" "bazarr" "qbittorrent" "music" "audiobooks" "requests")
 DNS_VALID=true
 
 for service in "${SERVICES[@]}"; do
@@ -586,7 +590,7 @@ Media Automation (*arr):
 - Sonarr (TV):        https://sonarr.${DOMAIN}
 - Radarr (Movies):    https://radarr.${DOMAIN}
 - Lidarr (Music):     https://lidarr.${DOMAIN}
-- Readarr (Books):    https://readarr.${DOMAIN}
+- Readarr (Books):    DISABLED - Image compatibility issues with linux/amd64
 - Prowlarr (Indexer): https://prowlarr.${DOMAIN}
 - Bazarr (Subtitles): https://bazarr.${DOMAIN}
 
@@ -611,7 +615,7 @@ IMPORTANT NEXT STEPS:
 
 1. Configure Prowlarr:
    - Add indexers (torrent sites)
-   - Connect to Sonarr, Radarr, Lidarr, Readarr
+   - Connect to Sonarr, Radarr, Lidarr
 
 2. Configure Download Clients:
    - Add qBittorrent to each *arr app
@@ -621,7 +625,7 @@ IMPORTANT NEXT STEPS:
    - Sonarr: /tv
    - Radarr: /movies
    - Lidarr: /music
-   - Readarr: /audiobooks
+   - (Readarr disabled due to compatibility issues)
 
 4. Link to Existing Media Servers:
    - Point Jellyfin to ./media/* directories
@@ -629,7 +633,7 @@ IMPORTANT NEXT STEPS:
    - Configure Audiobookshelf library
 
 5. Setup Ombi:
-   - Connect to Sonarr, Radarr, Lidarr, Readarr
+   - Connect to Sonarr, Radarr, Lidarr
    - Configure user access
    - Setup notifications
 
