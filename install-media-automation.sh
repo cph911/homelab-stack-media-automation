@@ -221,7 +221,7 @@ cat > docker-compose.yml << DOCKEREOF
 version: '3.8'
 
 networks:
-  traefik:
+  homelab:
     external: true
   media:
     driver: bridge
@@ -243,7 +243,7 @@ services:
       - ./media/tv:/tv
       - ./downloads:/downloads
     networks:
-      - traefik
+      - homelab
       - media
     deploy:
       resources:
@@ -270,7 +270,7 @@ services:
       - ./media/movies:/movies
       - ./downloads:/downloads
     networks:
-      - traefik
+      - homelab
       - media
     deploy:
       resources:
@@ -297,7 +297,7 @@ services:
       - ./media/music:/music
       - ./downloads:/downloads
     networks:
-      - traefik
+      - homelab
       - media
     deploy:
       resources:
@@ -324,7 +324,7 @@ services:
   #     - ./media/audiobooks:/audiobooks
   #     - ./downloads:/downloads
   #   networks:
-  #     - traefik
+  #     - homelab
   #     - media
   #   deploy:
   #     resources:
@@ -353,7 +353,7 @@ services:
     volumes:
       - ./config/prowlarr:/config
     networks:
-      - traefik
+      - homelab
       - media
     deploy:
       resources:
@@ -380,7 +380,7 @@ services:
       - ./media/movies:/movies
       - ./media/tv:/tv
     networks:
-      - traefik
+      - homelab
       - media
     deploy:
       resources:
@@ -411,7 +411,7 @@ services:
       - ./config/qbittorrent:/config
       - ./downloads:/downloads
     networks:
-      - traefik
+      - homelab
       - media
     ports:
       - "6881:6881"
@@ -460,7 +460,7 @@ services:
       - ./config/navidrome:/data
       - ./media/music:/music:ro
     networks:
-      - traefik
+      - homelab
     deploy:
       resources:
         limits:
@@ -483,7 +483,7 @@ services:
       - ./config/audiobookshelf:/config
       - ./media/audiobooks:/audiobooks
     networks:
-      - traefik
+      - homelab
     deploy:
       resources:
         limits:
@@ -511,7 +511,7 @@ services:
     volumes:
       - ./config/ombi:/config
     networks:
-      - traefik
+      - homelab
       - media
     deploy:
       resources:
