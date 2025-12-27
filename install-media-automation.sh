@@ -313,7 +313,7 @@ services:
     restart: unless-stopped
 
   readarr:
-    image: lscr.io/linuxserver/readarr:develop
+    image: lscr.io/linuxserver/readarr:nightly
     container_name: readarr
     environment:
       - PUID=1000
