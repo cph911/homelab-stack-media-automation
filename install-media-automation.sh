@@ -254,7 +254,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.rule=Host(\`sonarr.${DOMAIN}\`)"
       - "traefik.http.routers.sonarr.entrypoints=websecure"
-      - "traefik.http.routers.sonarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.sonarr.tls.certresolver=letsencrypt"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
     restart: unless-stopped
 
@@ -281,7 +281,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.rule=Host(\`radarr.${DOMAIN}\`)"
       - "traefik.http.routers.radarr.entrypoints=websecure"
-      - "traefik.http.routers.radarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.radarr.tls.certresolver=letsencrypt"
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
     restart: unless-stopped
 
@@ -308,7 +308,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.lidarr.rule=Host(\`lidarr.${DOMAIN}\`)"
       - "traefik.http.routers.lidarr.entrypoints=websecure"
-      - "traefik.http.routers.lidarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.lidarr.tls.certresolver=letsencrypt"
       - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
     restart: unless-stopped
 
@@ -335,7 +335,7 @@ services:
   #     - "traefik.enable=true"
   #     - "traefik.http.routers.readarr.rule=Host(\`readarr.${DOMAIN}\`)"
   #     - "traefik.http.routers.readarr.entrypoints=websecure"
-  #     - "traefik.http.routers.readarr.tls.certresolver=myresolver"
+  #     - "traefik.http.routers.readarr.tls.certresolver=letsencrypt"
   #     - "traefik.http.services.readarr.loadbalancer.server.port=8787"
   #   restart: unless-stopped
 
@@ -364,7 +364,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.rule=Host(\`prowlarr.${DOMAIN}\`)"
       - "traefik.http.routers.prowlarr.entrypoints=websecure"
-      - "traefik.http.routers.prowlarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
     restart: unless-stopped
 
@@ -391,7 +391,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr.rule=Host(\`bazarr.${DOMAIN}\`)"
       - "traefik.http.routers.bazarr.entrypoints=websecure"
-      - "traefik.http.routers.bazarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.bazarr.tls.certresolver=letsencrypt"
       - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
     restart: unless-stopped
 
@@ -425,7 +425,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.qbittorrent.rule=Host(\`qbittorrent.${DOMAIN}\`)"
       - "traefik.http.routers.qbittorrent.entrypoints=websecure"
-      - "traefik.http.routers.qbittorrent.tls.certresolver=myresolver"
+      - "traefik.http.routers.qbittorrent.tls.certresolver=letsencrypt"
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
     restart: unless-stopped
 
@@ -470,7 +470,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.navidrome.rule=Host(\`music.${DOMAIN}\`)"
       - "traefik.http.routers.navidrome.entrypoints=websecure"
-      - "traefik.http.routers.navidrome.tls.certresolver=myresolver"
+      - "traefik.http.routers.navidrome.tls.certresolver=letsencrypt"
       - "traefik.http.services.navidrome.loadbalancer.server.port=4533"
     restart: unless-stopped
 
@@ -493,7 +493,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.audiobookshelf.rule=Host(\`audiobooks.${DOMAIN}\`)"
       - "traefik.http.routers.audiobookshelf.entrypoints=websecure"
-      - "traefik.http.routers.audiobookshelf.tls.certresolver=myresolver"
+      - "traefik.http.routers.audiobookshelf.tls.certresolver=letsencrypt"
       - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
     restart: unless-stopped
 
@@ -522,7 +522,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.ombi.rule=Host(\`requests.${DOMAIN}\`)"
       - "traefik.http.routers.ombi.entrypoints=websecure"
-      - "traefik.http.routers.ombi.tls.certresolver=myresolver"
+      - "traefik.http.routers.ombi.tls.certresolver=letsencrypt"
       - "traefik.http.services.ombi.loadbalancer.server.port=3579"
     restart: unless-stopped
 DOCKEREOF
