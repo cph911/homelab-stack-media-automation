@@ -157,6 +157,37 @@ cat .env | grep DOMAIN=
 # Should show: DOMAIN=example.com (not DOMAIN=)
 ```
 
+### 7. DNS Validation False Positive (MINOR)
+
+**Issue**: DNS validation may show success even when DNS records don't exist
+
+**Root cause**: Commands like `nslookup`, `dig`, and `host` return exit code 0 for both successful lookups AND NXDOMAIN responses. They only fail (non-zero exit) on network errors or command failures.
+
+**Current behavior** (line 552):
+```bash
+if nslookup "${service}.${DOMAIN}" >/dev/null 2>&1 || dig +short "${service}.${DOMAIN}" >/dev/null 2>&1 || host "${service}.${DOMAIN}" >/dev/null 2>&1; then
+    echo -e "${GREEN}✓ ${service}.${DOMAIN}${NC}"
+```
+
+This will show ✓ even if DNS returns NXDOMAIN because the command itself succeeded.
+
+**Impact**:
+- User may think DNS is configured when it's not
+- Installation proceeds but SSL certificate issuance fails later
+- Not critical since user is prompted to continue anyway if validation fails
+
+**Status**: Known limitation, documented for future improvement
+
+**Potential fix**: Check command output instead of exit code:
+```bash
+if dig +short "${service}.${DOMAIN}" 2>/dev/null | grep -q .; then
+    echo -e "${GREEN}✓ ${service}.${DOMAIN}${NC}"
+else
+    echo -e "${YELLOW}⚠ ${service}.${DOMAIN} - Not found${NC}"
+    DNS_VALID=false
+fi
+```
+
 ## Testing Protocol
 
 When testing changes to this repository:
