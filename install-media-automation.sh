@@ -72,11 +72,24 @@ if [ -f "../homelab-stack/.env" ]; then
     DOMAIN=$(grep "DOMAIN=" ../homelab-stack/.env | cut -d'=' -f2)
 elif [ -f "/root/homelab-stack/.env" ]; then
     DOMAIN=$(grep "DOMAIN=" /root/homelab-stack/.env | cut -d'=' -f2)
-else
+fi
+
+# Validate DOMAIN is not empty, prompt if needed
+if [ -z "$DOMAIN" ]; then
     read -p "Enter your domain name (e.g., example.com): " DOMAIN
+    # Validate user actually entered something
+    while [ -z "$DOMAIN" ]; do
+        echo -e "${RED}Domain cannot be empty!${NC}"
+        read -p "Enter your domain name (e.g., example.com): " DOMAIN
+    done
 fi
 
 read -p "Enter your email for SSL certificates: " EMAIL
+# Validate EMAIL is not empty
+while [ -z "$EMAIL" ]; do
+    echo -e "${RED}Email cannot be empty!${NC}"
+    read -p "Enter your email for SSL certificates: " EMAIL
+done
 
 # RAM detection and resource limit configuration
 echo ""

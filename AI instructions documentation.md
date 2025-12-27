@@ -96,6 +96,67 @@ The installation script uses these variables for docker-compose resource limits:
 
 These are set based on user's RAM profile selection and MUST be substituted during docker-compose.yml generation.
 
+### 5. Certificate Resolver Configuration (CRITICAL)
+
+**Issue**: Traefik certificate resolver name must match homelab-stack configuration
+
+**Context**: The homelab-stack's Traefik instance uses `letsencrypt` as the certificate resolver name. All services must reference this exact name.
+
+**WRONG**:
+```yaml
+- "traefik.http.routers.prowlarr.tls.certresolver=myresolver"
+```
+
+**CORRECT**:
+```yaml
+- "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
+```
+
+**Symptoms if misconfigured**:
+- Error: "Router prowlarr@docker uses a nonexistent resolver: myresolver"
+- Services accessible but without SSL/TLS
+- Certificate issuance fails silently
+
+**Verification command**:
+```bash
+docker inspect traefik | grep certresolver
+```
+
+**Fixed lines**: All Traefik labels in docker-compose template use `certresolver=letsencrypt`
+
+### 6. Empty DOMAIN Variable (CRITICAL)
+
+**Issue**: Installation script could create .env with empty DOMAIN value
+
+**Root cause**: Script attempted to read DOMAIN from homelab-stack .env file, but if that value was empty or missing, it would create the media automation .env with `DOMAIN=` (no value).
+
+**Impact**:
+- Traefik sees incomplete host rules like `Host('prowlarr.')` instead of `Host('prowlarr.example.com')`
+- Services become inaccessible
+- SSL certificate issuance fails
+- Error difficult to diagnose (no clear error message)
+
+**Solution implemented** (lines 77-85):
+```bash
+# Validate DOMAIN is not empty, prompt if needed
+if [ -z "$DOMAIN" ]; then
+    read -p "Enter your domain name (e.g., example.com): " DOMAIN
+    # Validate user actually entered something
+    while [ -z "$DOMAIN" ]; do
+        echo -e "${RED}Domain cannot be empty!${NC}"
+        read -p "Enter your domain name (e.g., example.com): " DOMAIN
+    done
+fi
+```
+
+**Similar validation** added for EMAIL (lines 88-92) to prevent empty email addresses.
+
+**How to verify**: After installation, check:
+```bash
+cat .env | grep DOMAIN=
+# Should show: DOMAIN=example.com (not DOMAIN=)
+```
+
 ## Testing Protocol
 
 When testing changes to this repository:
